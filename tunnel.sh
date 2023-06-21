@@ -25,6 +25,7 @@ if [ -z "$MPID" ] ; then
   export GATEWAY_HOST="`echo $query | sed -e 's/^.*\"gateway_host\": *\"//' -e 's/\".*$//g'`"
   export GATEWAY_PORT="`echo $query | sed -e 's/^.*\"gateway_port\": *\"//' -e 's/\".*$//g'`"
   export GATEWAY_USER="`echo $query | sed -e 's/^.*\"gateway_user\": *\"//' -e 's/\".*$//g'`"
+  export SKIP_GATEWAY_PARAM="`echo $query | sed -e 's/^.*\"skip_gateway_param\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export SHELL_CMD="`echo $query | sed -e 's/^.*\"shell_cmd\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export SSH_TUNNEL_CHECK_SLEEP="`echo $query | sed -e 's/^.*\"ssh_tunnel_check_sleep\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export SSH_PARENT_WAIT_SLEEP="`echo $query | sed -e 's/^.*\"ssh_parent_wait_sleep\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
@@ -68,10 +69,14 @@ else
     env >&2
   fi
 
-  gw="$GATEWAY_HOST"
-  [ "X$GATEWAY_USER" = X ] || gw="$GATEWAY_USER@$GATEWAY_HOST"
+  gw=""
+  if [ "X$SKIP_GATEWAY_PARAM" != X ] ; then
+    gw="$GATEWAY_HOST"
+    [ "X$GATEWAY_USER" = X ] || gw="$GATEWAY_USER@$GATEWAY_HOST"
+  fi
 
   $SSH_CMD -N -L $LOCAL_HOST:$LOCAL_PORT:$TARGET_HOST:$TARGET_PORT -p $GATEWAY_PORT $gw &
+
   CPID=$!
   
   sleep $SSH_TUNNEL_CHECK_SLEEP

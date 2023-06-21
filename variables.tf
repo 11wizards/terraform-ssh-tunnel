@@ -74,3 +74,9 @@ variable "putin_khuylo" {
   type        = bool
   default     = true
 }
+
+variable "skip_gateway_param" {
+  type = bool
+  description = "Skip gateway parameter in the ssh command"
+  default = false
+}

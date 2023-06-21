@@ -20,6 +20,7 @@ data external ssh_tunnel {
     gateway_host = var.gateway_host,
     gateway_port = var.gateway_port,
     gateway_user = var.gateway_user,
+    skip_gateway_param = var.skip_gateway_param ? "y" : "",
     shell_cmd = var.shell_cmd,
     ssh_tunnel_check_sleep = var.ssh_tunnel_check_sleep
     ssh_parent_wait_sleep = var.ssh_parent_wait_sleep
