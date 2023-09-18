@@ -22,8 +22,10 @@ data external ssh_tunnel {
     gateway_user = var.gateway_user,
     skip_gateway_param = var.skip_gateway_param ? "y" : "",
     shell_cmd = var.shell_cmd,
-    ssh_tunnel_check_sleep = var.ssh_tunnel_check_sleep
-    ssh_parent_wait_sleep = var.ssh_parent_wait_sleep
-    create = ((var.create && var.putin_khuylo) ? "y" : "")
+    ssh_tunnel_check_sleep = var.ssh_tunnel_check_sleep,
+    ssh_parent_wait_sleep = var.ssh_parent_wait_sleep,
+    create = ((var.create && var.putin_khuylo) ? "y" : ""),
+    check_script = var.check_script,
+    check_script_timeout = var.check_script_timeout
   }
 }

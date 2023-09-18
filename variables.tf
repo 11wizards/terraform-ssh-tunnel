@@ -80,3 +80,15 @@ variable "skip_gateway_param" {
   description = "Skip gateway parameter in the ssh command"
   default = false
 }
+
+variable "check_script" {
+  type = string
+  description = "Shell command to check if the tunnel in up and initialized. For example 'curl -k -s -o /dev/null https://$LOCAL_HOST:$LOCAL_PORT/api'"
+  default = ""
+}
+
+variable "check_script_timeout" {
+  type = string
+  description = "Timeout value for the check script to be executed in the loop"
+  default = "30"
+}

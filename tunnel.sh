@@ -30,6 +30,8 @@ if [ -z "$MPID" ] ; then
   export SSH_TUNNEL_CHECK_SLEEP="`echo $query | sed -e 's/^.*\"ssh_tunnel_check_sleep\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export SSH_PARENT_WAIT_SLEEP="`echo $query | sed -e 's/^.*\"ssh_parent_wait_sleep\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export CREATE="`echo $query | sed -e 's/^.*\"create\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
+  export CHECK_SCRIPT="`echo $query | sed -e 's/^.*\"check_script\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
+  export CHECK_SCRIPT_TIMEOUT="`echo $query | sed -e 's/^.*\"check_script_timeout\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
 
   if [ "X$CREATE" = X -o "X$GATEWAY_HOST" = X ] ; then
     # No tunnel - connect directly to target host
@@ -58,8 +60,24 @@ if [ -z "$MPID" ] ; then
       cat $clog >&2
       rm -f $clog
       ret=1
+
+      exit $ret
     fi
     rm -f $clog
+
+    # Wait for the tunnel to be ready by checking the remote port is responding
+    if [ -n "$CHECK_SCRIPT" ] ; then
+      x=0
+      while [ $x -lt "$CHECK_SCRIPT_TIMEOUT" ] ; do
+        eval $CHECK_SCRIPT && break
+        sleep 1
+        x=$((x+1))
+      done
+      if [ $x -ge "$CHECK_SCRIPT_TIMEOUT" ] ; then
+        echo "Parent process can't verify tunnel running properly - Aborting" >&2
+        ret=1
+      fi
+    fi
   fi
 else
   #------ Child
